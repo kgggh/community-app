@@ -1,0 +1,21 @@
+user-service:
+  api:
+    url: http://localhost:8100/user-service
+server:
+  port: 8200
+spring:
+  application:
+    name: community-service
+  datasource:
+    url: jdbc:mariadb://localhost:3306/assignment
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true

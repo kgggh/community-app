@@ -1,0 +1,3 @@
+include ':gateway'
+include ':user-service'
+include ':community-service'
