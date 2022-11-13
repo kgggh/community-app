@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public String register(UserDto userDto) {
         userRepository.findByEmail(userDto.getEmail())
                 .ifPresent(i -> new UserCommonException("Exist email please retry again"));
@@ -48,6 +50,7 @@ public class UserService {
         jwtProvider.addToBlackList(token);
     }
 
+    @Transactional(readOnly = true)
     public UserDto getUserInfoByUserId(String userId) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(()
                 -> new UserCommonException("Not found user"));
@@ -58,6 +61,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public UserDto getUserInfoByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(()
                 -> new UserCommonException("Not found user"));
@@ -72,12 +76,14 @@ public class UserService {
         return passwordEncoder.encode(password);
     }
 
+    @Transactional(readOnly = true)
     private String getUserId(UserDto userDto) {
         Optional<User> user = userRepository.findByEmail(userDto.getEmail());
         validateLoginUserInfo(user, userDto.getPassword());
         return user.get().getId().toString();
     }
 
+    @Transactional(readOnly = true)
     private void validateLoginUserInfo(Optional<User> user, String password) {
         log.info(String.format("[VALIDATE] password=%s", password));
         User existUserByEmail = user.orElseThrow(()
