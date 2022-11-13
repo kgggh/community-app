@@ -31,6 +31,7 @@ public class ReplyCustomRepositoryImpl implements ReplyCustomRepository {
                         .orderBy(
                                 qReply.parentReply.id.asc().nullsFirst(),
                                 qReply.createdDateTime.desc())
+                        .offset(getOffset(replySearchCriteria))
                         .limit(replySearchCriteria.getSize())
                         .fetch();
 
@@ -59,5 +60,9 @@ public class ReplyCustomRepositoryImpl implements ReplyCustomRepository {
 
     private PageRequest makePageRequest(ReplySearchCriteria replySearchCriteria) {
         return PageRequest.of(replySearchCriteria.getPage(), replySearchCriteria.getSize());
+    }
+
+    private long getOffset(ReplySearchCriteria replySearchCriteria) {
+        return (long) replySearchCriteria.getPage() * (long) replySearchCriteria.getSize();
     }
 }
